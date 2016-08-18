@@ -1,6 +1,9 @@
 source 'https://rubygems.org'
 
-gem 'minitest', '~> 5.4'
+group :test do
+  gem 'minitest', '~> 5.4'
+  gem 'minitest-reporters'
+end
 
 group :development do
   gem 'guard'

@@ -1,6 +1,4 @@
-gem 'minitest', '~> 5.4'
-require 'minitest/autorun'
-require_relative '../lib/bottles'
+require_relative './test_helper'
 
 class BottlesTest < Minitest::Test
   def test_the_first_verse
