@@ -55,10 +55,6 @@ class Verse
     SecondLine.new(initial_bottles - 1).to_s
   end
 
-  def singular_or_plural
-    (initial_bottles - 1) < 2 ? "bottle" : "bottles"
-  end
-
 end
 
 class Line
