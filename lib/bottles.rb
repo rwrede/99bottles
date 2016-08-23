@@ -48,26 +48,28 @@ class Verse
   attr_reader :initial_bottles
 
   def first_line
-    FirstLine.new(initial_bottles).to_s
+    Setting.new(initial_bottles).to_s
   end
 
   def second_line
-    SecondLine.new(initial_bottles - 1).to_s
+    ActionAndOutcome.new(initial_bottles).to_s
   end
 
 end
 
-class Line
-
-  def initialize(bottles)
-    @bottles = bottles
-  end
+module Humanizable
 
   private
 
-  attr_reader :bottles
-
   def humanized_bottles
+    "#{humanized_number} #{humanized_subject}"
+  end
+
+  def humanized_bottles_on_the_wall
+    "#{humanized_bottles} on the wall"
+  end
+
+  def humanized_subject
     if bottles == 1
       "bottle of beer"
     else
@@ -85,29 +87,70 @@ class Line
 
 end
 
-class FirstLine < Line
+class Setting
 
-  def to_s
-    "#{humanized_number.capitalize} #{humanized_bottles} on the wall, #{humanized_number} #{humanized_bottles}."
+  include Humanizable
+
+  def initialize(bottles)
+    @bottles = bottles
   end
 
-end
-
-class SecondLine < Line
-
   def to_s
-    [action, remaining_bottles].join(", ")
+    to_sentence
   end
 
   private
 
-  def action
-    subject = bottles == 0 ? "it" : "one"
-    "Take #{subject} down and pass it around"
+  attr_reader :bottles
+
+  def to_sentence
+    "#{humanized_bottles_on_the_wall.capitalize}, #{humanized_bottles}."
   end
 
-  def remaining_bottles
-    "#{humanized_number} #{humanized_bottles} on the wall."
+end
+
+class ActionAndOutcome
+
+  include Humanizable
+
+  def initialize(bottles)
+    @bottles = bottles
+  end
+
+  def to_s
+    to_sentence
+  end
+
+  private
+
+  attr_reader :bottles
+
+  def to_sentence
+    "#{action}, #{outcome}."
+  end
+
+  def action
+    if bottles > 0
+      take_one
+    else
+      fill_up
+    end
+  end
+
+  def take_one
+    "Take #{bottles == 1 ? "it" : "one"} down and pass it around".tap do
+      @bottles = bottles - 1
+    end
+  end
+
+  def fill_up
+    "Go to the store and buy some more".tap do
+      @bottles = 99
+    end
+  end
+
+  def outcome
+    humanized_bottles_on_the_wall
   end
 
 end
