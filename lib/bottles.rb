@@ -32,125 +32,44 @@ end
 
 class Verse
 
-  def initialize(initial_bottles)
-    @initial_bottles = initial_bottles
+  def initialize(bottles)
+    @bottles = bottles
   end
 
   def to_s
+    case bottles
+    when 0
+      fill_up
+    when 1
+      take_last_out
+    else
+      take_one_out
+    end
+  end
+
+  private
+
+  attr_reader :bottles
+
+  def take_one_out
     <<-VERSE
-#{first_line}
-#{second_line}
+#{bottles} bottles of beer on the wall, #{bottles} bottles of beer.
+Take one down and pass it around, #{bottles-1} #{bottles-1 > 1 ? "bottles" : "bottle" } of beer on the wall.
     VERSE
   end
 
-  private
-
-  attr_reader :initial_bottles
-
-  def first_line
-    Setting.new(initial_bottles).to_s
-  end
-
-  def second_line
-    ActionAndOutcome.new(initial_bottles).to_s
-  end
-
-end
-
-module Humanizable
-
-  private
-
-  def humanized_bottles
-    "#{humanized_number} #{humanized_subject}"
-  end
-
-  def humanized_bottles_on_the_wall
-    "#{humanized_bottles} on the wall"
-  end
-
-  def humanized_subject
-    if bottles == 1
-      "bottle of beer"
-    else
-      "bottles of beer"
-    end
-  end
-
-  def humanized_number
-    if bottles == 0
-      "no more"
-    else
-      bottles.to_s
-    end
-  end
-
-end
-
-class Setting
-
-  include Humanizable
-
-  def initialize(bottles)
-    @bottles = bottles
-  end
-
-  def to_s
-    to_sentence
-  end
-
-  private
-
-  attr_reader :bottles
-
-  def to_sentence
-    "#{humanized_bottles_on_the_wall.capitalize}, #{humanized_bottles}."
-  end
-
-end
-
-class ActionAndOutcome
-
-  include Humanizable
-
-  def initialize(bottles)
-    @bottles = bottles
-  end
-
-  def to_s
-    to_sentence
-  end
-
-  private
-
-  attr_reader :bottles
-
-  def to_sentence
-    "#{action}, #{outcome}."
-  end
-
-  def action
-    if bottles > 0
-      take_one
-    else
-      fill_up
-    end
-  end
-
-  def take_one
-    "Take #{bottles == 1 ? "it" : "one"} down and pass it around".tap do
-      @bottles = bottles - 1
-    end
+  def take_last_out
+    <<-VERSE
+1 bottle of beer on the wall, 1 bottle of beer.
+Take it down and pass it around, no more bottles of beer on the wall.
+    VERSE
   end
 
   def fill_up
-    "Go to the store and buy some more".tap do
-      @bottles = 99
-    end
-  end
-
-  def outcome
-    humanized_bottles_on_the_wall
+    <<-VERSE
+No more bottles of beer on the wall, no more bottles of beer.
+Go to the store and buy some more, 99 bottles of beer on the wall.
+    VERSE
   end
 
 end
