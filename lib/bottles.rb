@@ -17,16 +17,21 @@ end
 class Song
 
   def initialize(bottles_from=99, bottles_to=0)
-    @verses = bottles_from..bottles_to.map { |bottles| Verse.new(bottles).to_s }
+    @bottles_from = bottles_from
+    @bottles_to = bottles_to
   end
 
   def to_s
-    verses.join("\n\n")
+    verses.map(&:to_s).join("\n")
   end
 
   private
 
-  attr_reader :verses
+  attr_reader :bottles_from, :bottles_to
+
+  def verses
+    @verses ||= bottles_from.downto(bottles_to).map { |b| Verse.new(b) }
+  end
 
 end
 
